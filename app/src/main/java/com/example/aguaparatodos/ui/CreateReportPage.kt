@@ -27,6 +27,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.aguaparatodos.ui.stepper.StepProgressBar
+import com.example.aguaparatodos.ui.stepper.StepReportDescription
+import com.example.aguaparatodos.ui.stepper.StepReportImages
+import com.example.aguaparatodos.ui.stepper.StepReportLocation
+import com.example.aguaparatodos.ui.stepper.StepReportType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -87,10 +91,10 @@ fun CreateReportPage(onBack: () -> Unit, onCreate: () -> Unit) {
             StepProgressBar(step, steps)
 
             when(step) {
-                0 -> Text("Tipo de denúncia")
-                1 -> Text("Imagens")
-                2 -> Text("Local")
-                3 -> Text("Descrição")
+                0 -> StepReportType()
+                1 -> StepReportImages()
+                2 -> StepReportLocation()
+                3 -> StepReportDescription()
             }
         }
     }
