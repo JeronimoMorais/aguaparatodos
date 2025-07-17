@@ -1,11 +1,14 @@
 package com.example.aguaparatodos
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
@@ -17,9 +20,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.rememberNavController
 import com.example.aguaparatodos.ui.nav.BottomNavBar
 import com.example.aguaparatodos.ui.nav.BottomNavItem
@@ -27,11 +29,13 @@ import com.example.aguaparatodos.ui.nav.MainNavHost
 import com.example.aguaparatodos.ui.theme.AguaParaTodosTheme
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("ContextCastToActivity")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            val activity = LocalContext.current as? Activity
             val navController = rememberNavController()
             AguaParaTodosTheme {
                 Scaffold(
@@ -57,7 +61,13 @@ class MainActivity : ComponentActivity() {
                         BottomNavBar(navController = navController, items)
                     },
                     floatingActionButton = {
-                        FloatingActionButton(onClick = {}) {
+                        FloatingActionButton(onClick = {
+                            activity?.startActivity(
+                                Intent(activity, CreateReportActivity::class.java).setFlags(
+                                    FLAG_ACTIVITY_SINGLE_TOP
+                                )
+                            )
+                        }) {
                             Icon(Icons.Default.Add, contentDescription = "Add Report")
                         }
                     }
@@ -68,21 +78,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    AguaParaTodosTheme {
-        Greeting("Android")
     }
 }
