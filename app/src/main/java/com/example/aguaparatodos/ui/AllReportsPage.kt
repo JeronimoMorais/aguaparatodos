@@ -52,6 +52,6 @@ fun AllReportsPage() {
         onMapClick = { },
         cameraPositionState = camPosState,
         properties = MapProperties(isMyLocationEnabled = hasLocationPermission),
-        uiSettings = MapUiSettings(myLocationButtonEnabled = true),
+        uiSettings = MapUiSettings(myLocationButtonEnabled = true, zoomControlsEnabled = false),
     )
 }
