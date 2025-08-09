@@ -46,7 +46,7 @@ fun StepReportType() {
 
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp).fillMaxSize()
     ) {
         reportTypes.forEachIndexed { _, pair ->
