@@ -1,32 +1,57 @@
 package com.example.aguaparatodos.ui
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import android.Manifest
+import android.content.pm.PackageManager
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.compose.GoogleMap
+import com.google.maps.android.compose.MapProperties
+import com.google.maps.android.compose.MapUiSettings
+import com.google.maps.android.compose.rememberCameraPositionState
 
 @Composable
 fun AllReportsPage() {
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(Color.Gray)
-            .wrapContentSize(Alignment.Center)
-    ) {
-        Text(
-            text = "Todas as ocorrências",
-            fontWeight = FontWeight.Bold,
-            color = Color.White,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            textAlign = TextAlign.Center,
-            fontSize = 20.sp
+    val context = LocalContext.current
+    val camPosState = rememberCameraPositionState()
+    val fuseLocationClient = remember {
+        LocationServices.getFusedLocationProviderClient(context)
+    }
+    val hasLocationPermission by remember {
+        mutableStateOf(
+            ContextCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED
         )
     }
+
+    LaunchedEffect(hasLocationPermission) {
+        if (hasLocationPermission) {
+            fuseLocationClient.lastLocation.addOnSuccessListener { location ->
+                location?.let {
+                    val latLng = LatLng(it.latitude, it.longitude)
+                    camPosState.move(
+                        CameraUpdateFactory.newLatLngZoom(latLng, 15f)
+                    )
+                }
+            }
+        }
+    }
+
+    GoogleMap(
+        modifier = Modifier.fillMaxSize(),
+        onMapClick = { },
+        cameraPositionState = camPosState,
+        properties = MapProperties(isMyLocationEnabled = hasLocationPermission),
+        uiSettings = MapUiSettings(myLocationButtonEnabled = true),
+    )
 }
