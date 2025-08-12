@@ -106,6 +106,17 @@ fun CadastroPage(modifier: Modifier = Modifier) {
 
             Button(
                 onClick = {
+                    Firebase.auth.createUserWithEmailAndPassword(email, senha)
+                        .addOnCompleteListener(activity!!) { task ->
+                            if (task.isSuccessful) {
+                                Toast.makeText(activity,
+                                    "Registro OK!", Toast.LENGTH_LONG).show()
+                                activity.finish()
+                            } else {
+                                Toast.makeText(activity,
+                                    "Registro FALHOU!", Toast.LENGTH_LONG).show()
+                            }
+                        }
                     Toast.makeText(
                         activity, "Cadastrado com Sucesso!",
                         Toast.LENGTH_LONG
@@ -140,42 +151,6 @@ fun CadastroPage(modifier: Modifier = Modifier) {
             ) {
                 Text("Voltar")
             }
-
-            Row(modifier = modifier) {
-                Button(
-                    onClick = {
-                        Firebase.auth.createUserWithEmailAndPassword(email, senha)
-                            .addOnCompleteListener(activity!!) { task ->
-                                if (task.isSuccessful) {
-                                    FBDatabase().register(User(nome, email).toFBUser())
-                                    Toast.makeText(activity, "Registro OK!", Toast.LENGTH_LONG)
-                                        .show()
-                                } else {
-                                    Toast.makeText(activity, "Registro FALHOU!", Toast.LENGTH_LONG)
-                                        .show()
-                                }
-                            }
-                    }, enabled = senha == repeat_password
-                ) {
-                    Text("Registrar")
-                }
-                Button(
-                    onClick = { nome = ""; email = ""; senha = ""; repeat_password = "" },
-                    enabled = nome.isNotEmpty() || email.isNotEmpty() || senha.isNotEmpty() || repeat_password.isNotEmpty()
-                ) {
-                    Text("Limpar")
-                }
-            }
-
-
-
-
-
-
-
-
-
-
             Button(
                 onClick = {
                     nome = ""; email = ""; senha = ""; repeat_password = "";

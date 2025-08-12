@@ -25,6 +25,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.aguaparatodos.ui.theme.AguaParaTodosTheme
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class LoginActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +47,7 @@ class LoginActivity : ComponentActivity() {
 @Composable
 fun LoginPage(modifier: Modifier = Modifier) {
     var email by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
+    var senha by rememberSaveable { mutableStateOf("") }
     val activity = LocalContext.current as? Activity
 
     Column(
@@ -79,25 +81,41 @@ fun LoginPage(modifier: Modifier = Modifier) {
             )
 
             OutlinedTextField(
-                value = password,
+                value = senha,
                 label = { Text(text = "Digite sua senha") },
                 modifier = modifier.fillMaxWidth(fraction = 0.9f),
-                onValueChange = { password = it },
+                onValueChange = { senha = it },
                 visualTransformation = PasswordVisualTransformation()
             )
 
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    Toast.makeText(activity, "Usuário autenticado!", Toast.LENGTH_LONG).show()
-                    activity?.startActivity(
-                        Intent(activity, MainActivity::class.java).setFlags(
-                            FLAG_ACTIVITY_SINGLE_TOP
-                        )
-                    )
-
+                    if (email == "" || senha == "") {
+                        Toast.makeText(activity, "Preencha todos os campos", Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        Firebase.auth.signInWithEmailAndPassword(email, senha)
+                            .addOnCompleteListener(activity!!) { task ->
+                                if (task.isSuccessful) {
+                                    Toast.makeText(
+                                        activity,
+                                        "Usuário autenticado!",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    activity?.startActivity(
+                                        Intent(activity, MainActivity::class.java).setFlags(
+                                            FLAG_ACTIVITY_SINGLE_TOP
+                                        )
+                                    )
+                                } else {
+                                    Toast.makeText(activity, "Login FALHOU!", Toast.LENGTH_LONG)
+                                        .show()
+                                }
+                            }
+                    }
                 }
-            ){
+            ) {
                 Spacer(modifier = Modifier.width(8.dp))
                 Text("Entrar")
             }

@@ -27,6 +27,8 @@ import com.example.aguaparatodos.ui.nav.BottomNavBar
 import com.example.aguaparatodos.ui.nav.BottomNavItem
 import com.example.aguaparatodos.ui.nav.MainNavHost
 import com.example.aguaparatodos.ui.theme.AguaParaTodosTheme
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("ContextCastToActivity")
@@ -49,6 +51,7 @@ class MainActivity : ComponentActivity() {
                                             FLAG_ACTIVITY_SINGLE_TOP
                                         )
                                     )
+                                    Firebase.auth.signOut()
                                     finish()
                                 }) {
                                     Icon(
