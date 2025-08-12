@@ -43,7 +43,14 @@ class MainActivity : ComponentActivity() {
                         TopAppBar(
                             title = { Text("Bem-vindo/a!") },
                             actions = {
-                                IconButton( onClick = { finish() } ) {
+                                IconButton(onClick = {
+                                    activity?.startActivity(
+                                        Intent(activity, LoginActivity::class.java).setFlags(
+                                            FLAG_ACTIVITY_SINGLE_TOP
+                                        )
+                                    )
+                                    finish()
+                                }) {
                                     Icon(
                                         imageVector =
                                             Icons.AutoMirrored.Filled.ExitToApp,

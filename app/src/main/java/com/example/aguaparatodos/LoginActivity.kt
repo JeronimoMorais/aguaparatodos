@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.aguaparatodos.ui.theme.AguaParaTodosTheme
@@ -40,7 +41,7 @@ class LoginActivity : ComponentActivity() {
 }
 
 @SuppressLint("ContextCastToActivity")
-@Preview(showBackground = true)
+//@Preview(showBackground = true)
 @Composable
 fun LoginPage(modifier: Modifier = Modifier) {
     var email by rememberSaveable { mutableStateOf("") }
@@ -70,6 +71,21 @@ fun LoginPage(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
             horizontalAlignment = CenterHorizontally
         ) {
+            OutlinedTextField(
+                value = email,
+                label = { Text(text = "Digite seu e-mail") },
+                modifier = modifier.fillMaxWidth(fraction = 0.9f),
+                onValueChange = { email = it }
+            )
+
+            OutlinedTextField(
+                value = password,
+                label = { Text(text = "Digite sua senha") },
+                modifier = modifier.fillMaxWidth(fraction = 0.9f),
+                onValueChange = { password = it },
+                visualTransformation = PasswordVisualTransformation()
+            )
+
             OutlinedButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
@@ -81,10 +97,22 @@ fun LoginPage(modifier: Modifier = Modifier) {
                     )
 
                 }
-            ) {
-                Icon(Icons.AutoMirrored.Default.Send, contentDescription = "Google Icon")
+            ){
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Login com Google")
+                Text("Entrar")
+            }
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    Toast.makeText(activity, "Página de cadastro!", Toast.LENGTH_LONG).show()
+                    activity?.startActivity(
+                        Intent(activity, CadastroActivity::class.java).setFlags(
+                            FLAG_ACTIVITY_SINGLE_TOP
+                        )
+                    )
+                }
+            ) {
+                Text("Cadastrar")
             }
             Button(
                 modifier = Modifier.fillMaxWidth(),

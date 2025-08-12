@@ -2,6 +2,8 @@ package com.example.aguaparatodos
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -17,7 +19,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.aguaparatodos.models.User
 import com.example.aguaparatodos.ui.theme.AguaParaTodosTheme
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class CadastroActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,14 +70,18 @@ fun CadastroPage(modifier: Modifier = Modifier) {
                 value = nome,
                 onValueChange = { nome = it },
                 label = { Text("Nome") },
-                modifier = Modifier.fillMaxWidth(0.9f).padding(top = 16.dp)
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .padding(top = 16.dp)
             )
 
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
                 label = { Text("E-mail") },
-                modifier = Modifier.fillMaxWidth(0.9f).padding(top = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .padding(top = 8.dp)
             )
 
             OutlinedTextField(
@@ -80,7 +89,9 @@ fun CadastroPage(modifier: Modifier = Modifier) {
                 onValueChange = { senha = it },
                 label = { Text("Digite sua senha") },
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(0.9f).padding(top = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .padding(top = 8.dp)
             )
 
             OutlinedTextField(
@@ -88,22 +99,93 @@ fun CadastroPage(modifier: Modifier = Modifier) {
                 label = { Text(text = "Digite sua senha novamente") },
                 onValueChange = { repeat_password = it },
                 visualTransformation = PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(0.9f).padding(top = 8.dp)
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .padding(top = 8.dp)
             )
 
             Button(
-                onClick = { Toast.makeText(activity, "Cadastrado com Sucesso!",
-                    Toast.LENGTH_LONG).show() },
-                modifier = Modifier.padding(top = 24.dp).fillMaxWidth(0.9f)
+                onClick = {
+                    Toast.makeText(
+                        activity, "Cadastrado com Sucesso!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    activity?.startActivity(
+                        Intent(activity, MainActivity::class.java).setFlags(
+                            FLAG_ACTIVITY_SINGLE_TOP
+                        )
+                    )
+                },
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .fillMaxWidth(0.9f)
             ) {
                 Text("Cadastrar")
             }
+            Button(
+                onClick = {
+                    Toast.makeText(
+                        activity, "Página incial!!",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    activity?.startActivity(
+                        Intent(activity, LoginActivity::class.java).setFlags(
+                            FLAG_ACTIVITY_SINGLE_TOP
+                        )
+                    )
+                },
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .fillMaxWidth(0.9f)
+            ) {
+                Text("Voltar")
+            }
+
+            Row(modifier = modifier) {
+                Button(
+                    onClick = {
+                        Firebase.auth.createUserWithEmailAndPassword(email, senha)
+                            .addOnCompleteListener(activity!!) { task ->
+                                if (task.isSuccessful) {
+                                    FBDatabase().register(User(nome, email).toFBUser())
+                                    Toast.makeText(activity, "Registro OK!", Toast.LENGTH_LONG)
+                                        .show()
+                                } else {
+                                    Toast.makeText(activity, "Registro FALHOU!", Toast.LENGTH_LONG)
+                                        .show()
+                                }
+                            }
+                    }, enabled = senha == repeat_password
+                ) {
+                    Text("Registrar")
+                }
+                Button(
+                    onClick = { nome = ""; email = ""; senha = ""; repeat_password = "" },
+                    enabled = nome.isNotEmpty() || email.isNotEmpty() || senha.isNotEmpty() || repeat_password.isNotEmpty()
+                ) {
+                    Text("Limpar")
+                }
+            }
+
+
+
+
+
+
+
+
+
 
             Button(
-                onClick = { nome = ""; email = ""; senha = ""; repeat_password = "";
-                    Toast.makeText(activity, "Você limpou todos os campos!", Toast.LENGTH_LONG).show() },
+                onClick = {
+                    nome = ""; email = ""; senha = ""; repeat_password = "";
+                    Toast.makeText(activity, "Você limpou todos os campos!", Toast.LENGTH_LONG)
+                        .show()
+                },
                 enabled = nome.isNotEmpty() || email.isNotEmpty() || senha.isNotEmpty() || senha.isNotEmpty(),
-                modifier = Modifier.padding(top = 24.dp).fillMaxWidth(0.9f),
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .fillMaxWidth(0.9f),
             ) {
                 Text("Limpar")
             }
