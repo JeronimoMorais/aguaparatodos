@@ -39,4 +39,15 @@ class FBDatabase {
         val uid = auth.currentUser!!.uid
         db.collection("users").document(uid + "").set(user);
     }
+
+    fun addReport(report: FBReport) {
+        if (auth.currentUser == null)
+            throw RuntimeException("User not logged in!")
+
+        if (report.type == null)
+            throw RuntimeException("Report invalid!")
+
+        val uid = auth.currentUser!!.uid
+        db.collection("users").document(uid).collection("reports").add(report)
+    }
 }

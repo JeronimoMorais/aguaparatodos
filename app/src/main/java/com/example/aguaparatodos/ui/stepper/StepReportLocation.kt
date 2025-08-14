@@ -17,26 +17,18 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.example.aguaparatodos.CreateReportViewModel
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.model.LatLng
 
 
 @Composable
-@Preview(showSystemUi = true)
-fun StepReportLocation() {
+fun StepReportLocation(viewModel: CreateReportViewModel) {
     var address: Address? = null
-    var state by rememberSaveable { mutableStateOf("") }
-    var city by rememberSaveable { mutableStateOf("") }
-    var neighborhood by rememberSaveable { mutableStateOf("") }
-    var street by rememberSaveable { mutableStateOf("") }
-    var number by rememberSaveable { mutableStateOf("") }
-    var zipcode by rememberSaveable { mutableStateOf("") }
 
     val context = LocalContext.current
     val fuseLocationClient = remember {
@@ -61,11 +53,12 @@ fun StepReportLocation() {
                     if (!addresses.isNullOrEmpty()) {
                         address = addresses[0]
 
-                        state = address.adminArea
-                        city = address.subAdminArea
-                        neighborhood = address.subLocality
-                        street = address.thoroughfare
-                        zipcode = address.postalCode
+                        viewModel.updateLocation(LatLng(location.latitude, location.longitude))
+                        viewModel.updateState(address.adminArea)
+                        viewModel.updateCity(address.subAdminArea)
+                        viewModel.updateNeighborhood(address.subLocality)
+                        viewModel.updateStreet(address.thoroughfare)
+                        viewModel.updateZipcode(address.postalCode)
                     }
                 }
             }
@@ -76,29 +69,30 @@ fun StepReportLocation() {
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp).fillMaxSize()
     ) {
+        Text(viewModel.address.isValid().toString())
         OutlinedTextField(
             modifier = Modifier.Companion.fillMaxWidth(),
             label = { Text("Estado") },
-            value = state,
-            onValueChange = { state = it }
+            value = viewModel.address.state ?: "",
+            onValueChange = { viewModel.updateState(it) }
         )
         OutlinedTextField(
             modifier = Modifier.Companion.fillMaxWidth(),
             label = { Text("Cidade") },
-            value = city,
-            onValueChange = { city = it }
+            value = viewModel.address.city ?: "",
+            onValueChange = { viewModel.updateCity(it) }
         )
         OutlinedTextField(
             modifier = Modifier.Companion.fillMaxWidth(),
             label = { Text("Bairro") },
-            value = neighborhood,
-            onValueChange = { neighborhood = it }
+            value = viewModel.address.neighborhood ?: "",
+            onValueChange = { viewModel.updateNeighborhood(it) }
         )
         OutlinedTextField(
             modifier = Modifier.Companion.fillMaxWidth(),
             label = { Text("Rua") },
-            value = street,
-            onValueChange = { street = it }
+            value = viewModel.address.street ?: "",
+            onValueChange = { viewModel.updateStreet(it) }
         )
         Row (
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -106,13 +100,13 @@ fun StepReportLocation() {
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth(0.5f),
                 label = { Text("CEP") },
-                value = zipcode,
-                onValueChange = { zipcode = it }
+                value = viewModel.address.zipcode ?: "",
+                onValueChange = { viewModel.updateZipcode(it) }
             )
             OutlinedTextField(
                 label = { Text("Número") },
-                value = number,
-                onValueChange = { number = it }
+                value = viewModel.address.number ?: "",
+                onValueChange = { viewModel.updateNumber(it) }
             )
         }
     }

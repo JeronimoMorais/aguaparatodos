@@ -1,5 +1,6 @@
 package com.example.aguaparatodos.models
 
+
 data class Report(
     val type: ReportType? = null,
     val images: List<String> = emptyList<String>(),

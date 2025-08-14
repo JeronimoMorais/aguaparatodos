@@ -13,14 +13,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.aguaparatodos.CreateReportViewModel
 
 @Composable
-@Preview(showBackground = true)
-fun StepReportDescription() {
-    var description by rememberSaveable { mutableStateOf("") }
-
+fun StepReportDescription(viewModel: CreateReportViewModel) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp).fillMaxSize()
@@ -29,8 +26,8 @@ fun StepReportDescription() {
             modifier = Modifier.Companion.fillMaxWidth(),
             label = { Text("Descrição (opcional)") },
             placeholder = { Text("Insira mais informações sobre sua denúncia.") },
-            value = description,
-            onValueChange = { description = it },
+            value = viewModel.description,
+            onValueChange = { viewModel.description = it },
             minLines = 10
         )
     }
