@@ -20,9 +20,12 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
+import com.example.aguaparatodos.db.FBDatabase
 import com.example.aguaparatodos.ui.nav.BottomNavBar
 import com.example.aguaparatodos.ui.nav.BottomNavItem
 import com.example.aguaparatodos.ui.nav.MainNavHost
@@ -37,6 +40,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+//            val fbDB = remember { FBDatabase() }
+//            val viewModel : MainViewModel = viewModel(
+//                factory = MainViewModelFactory(fbDB)
+//            )
             val activity = LocalContext.current as? Activity
             val navController = rememberNavController()
             AguaParaTodosTheme {
@@ -46,11 +53,6 @@ class MainActivity : ComponentActivity() {
                             title = { Text("Bem-vindo/a!") },
                             actions = {
                                 IconButton(onClick = {
-                                    activity?.startActivity(
-                                        Intent(activity, LoginActivity::class.java).setFlags(
-                                            FLAG_ACTIVITY_SINGLE_TOP
-                                        )
-                                    )
                                     Firebase.auth.signOut()
                                     finish()
                                 }) {
